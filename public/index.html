@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Assessment Portal</title>
+    <link rel="icon" href="/static/favicon2.png" type="image/png">
+    <link rel="stylesheet" href="codemirror-5.65.16/lib/codemirror.css">
+    <script src="codemirror-5.65.16/mode/python/python.js"></script>
+
+    <script src="codemirror-5.65.16/lib/codemirror.js"></script>
+    <script src="codemirror-5.65.16/mode/clike/clike.js"></script>
+    <link rel="stylesheet" href="codemirror-5.65.16/theme/dracula.css">
+    <script src="codemirror-5.65.16/addon/edit/closebrackets.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <style>
+        .btn-facebook {
+            color: #3b5998 !important;
+            border-color: #3b5998 !important;
+        }
+
+        .btn-linkedin {
+            color: #0077b5 !important;
+            border-color: #0077b5 !important;
+        }
+
+        .btn-instagram {
+            color: #833ab4 !important;
+            border-color: #833ab4 !important;
+        }
+
+        .btn-social:hover {
+            color: white !important;
+        }
+
+        .btn-social:hover .bi {
+            filter: brightness(0) invert(1);
+        }
+        
+        #output {
+            font-family: 'Arial', sans-serif;
+            font-size: 20px;
+            color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Coding Portal</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/assessment.html">Assessment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/problems.html">Problems</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">IDE</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="row m-3 w-500">
+        <div class="col">
+            <div class="d-flex justify-content-between mb-2 bg-dark rounded p-2">
+                <div class="col-12 w-25">
+                    <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+                    <select class="form-select" id="inlineFormSelectPref">
+                        <option selected>Choose...</option>
+                        <option value="Java">Java</option>
+                        <option value="Cpp">C++</option>
+                        <option value="Python">Python</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-success">Submit</button>
+                    <button type="button" id="run" class="btn btn-success"><i class="bi bi-play-fill"></i></button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mb-2 bg-dark rounded p-2">
+                <div class="col-12">
+                    <label class="visually-hidden" for="filename">File Name</label>
+                    <input type="text" id="filename" class="form-control" placeholder="File Name" value="Main">
+                </div>
+            </div>
+            <textarea type="text" id="editor" class="form-control" aria-label="Code Editor"></textarea>
+        </div>
+        <div class="col d-flex flex-column rounded bg-dark px-4">
+            <div class="h-50">
+                <label for="Input" class="text-light mt-4 mb-2">Input</label>
+                <textarea type="text" id="input" class="form-control h-75" aria-label="Input"></textarea>
+            </div>
+            <div class="h-50 ">
+                <label for="Output" class="text-light mb-2">Output</label>
+                <textarea type="text" readonly oncopy="return true;" id="output" class="form-control h-75" aria-label="Output" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get the textarea element
+        var editor = document.getElementById("editor");
+
+        // Disable copy and paste events
+        editor.addEventListener("copy", function(event) {
+            event.preventDefault();
+        });
+
+        editor.addEventListener("cut", function(event) {
+            event.preventDefault();
+        });
+
+        editor.addEventListener("paste", function(event) {
+            event.preventDefault();
+        });
+    </script>
+</body>
+
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        mode: "text/x-c++src",
+        theme: "dracula",
+        lineNumbers: true,
+        autoCloseBrackets: true,
+    });
+    var width = window.innerWidth
+    var input = document.getElementById("input")
+    var output = document.getElementById("output")
+    var run = document.getElementById("run")
+    var filename = document.getElementById("filename")
+    editor.setSize("100%", "500")
+    editor.on("contextmenu", function (cm, event) {
+            event.preventDefault();
+        });
+    editor.setOption("extraKeys", {
+        // "Ctrl-C": function () { },
+        // "Cmd-C": function () { },
+        // "Ctrl-X": function () { },
+        // "Cmd-X": function () { },
+        // "Ctrl-V": function () { },
+        // "Cmd-V": function () { }
+    });
+    var option = document.getElementById("inlineFormSelectPref")
+    option.addEventListener("change", function () {
+        if (option.value == "Java") {
+            editor.setOption("mode", "text/x-java")
+            editor.setValue("// Java code snippet\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello Guys, this is Sameer.\");\n        System.out.println(\"This is my coding assessment portal.\");\n        System.out.println(\"You can execute your own codes here.\");\n    }\n}")
+        }
+        else if (option.value == "Python") {
+            editor.setOption("mode", "text/x-c++src")
+            editor.setValue("# Python code snippet\nprint(\"Hello Guys, this is Sameer.\")\nprint(\"This is my coding assessment portal.\")\nprint(\"You can execute your own codes here.\")")
+        }
+        else {
+            editor.setOption("mode", "text/x-c++src")
+            editor.setValue("// C++ code snippet\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello Guys, this is Sameer.\" << endl;\n    cout << \"This is my coding assessment portal.\" << endl;\n    cout << \"You can execute your own codes here.\" << endl;\n    return 0;\n}")
+        }
+        // Reset input and output fields
+        input.value = "";
+        output.value = "";
+    })
+    var code;
+    run.addEventListener("click", async function () {
+        code = {
+            code: editor.getValue(),
+            input: input.value,
+            lang: option.value,
+            filename: filename.value || "Main"
+        }
+        console.log(code)
+        var oData = await fetch("http://localhost:8000/compile", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(code)
+        });
+        const result = await oData.json();
+        output.value = result.output;
+    })
+</script>
+</html>
